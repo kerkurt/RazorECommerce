@@ -7,19 +7,23 @@ namespace RazorECommerce.Pages.Categories
 {
     //If we use like that, no need to write every single property bind attribute
     //[BindProperties] 
-    public class CreateModel : PageModel
+    public class EditModel : PageModel
     {
         public readonly ApplicationDbContext m_Db;
         [BindProperty]
         public Category Category { get; set; }
 
-        public CreateModel(ApplicationDbContext db)
+        public EditModel(ApplicationDbContext db)
         {
             m_Db = db;
         }
     
-        public void OnGet()
+        public void OnGet(int id)
         {
+            Category = m_Db.Category.Find(id);
+            //Category = m_Db.Category.FirstOrDefault(x => x.Id == id);
+            //Category = m_Db.Category.SingleOrDefault(x => x.Id == id);
+            //Category = m_Db.Category.Where(x => x.Id == id).FirstOrDefault();
         }
 
         public async Task<IActionResult> OnPost() 
@@ -31,7 +35,7 @@ namespace RazorECommerce.Pages.Categories
             if (ModelState.IsValid)
             {
                 //If there will be multiple post action methods, name can be like "OnPostCreate", "OnPostEdit" etc.
-                await m_Db.Category.AddAsync(Category);
+                m_Db.Category.Update(Category);
                 await m_Db.SaveChangesAsync();
                 return RedirectToPage("Index");
             }

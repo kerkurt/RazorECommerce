@@ -7,34 +7,35 @@ namespace RazorECommerce.Pages.Categories
 {
     //If we use like that, no need to write every single property bind attribute
     //[BindProperties] 
-    public class CreateModel : PageModel
+    public class DeleteModel : PageModel
     {
         public readonly ApplicationDbContext m_Db;
         [BindProperty]
         public Category Category { get; set; }
 
-        public CreateModel(ApplicationDbContext db)
+        public DeleteModel(ApplicationDbContext db)
         {
             m_Db = db;
         }
-    
-        public void OnGet()
+
+        public void OnGet(int id)
         {
+            Category = m_Db.Category.Find(id);
+            //Category = m_Db.Category.FirstOrDefault(x => x.Id == id);
+            //Category = m_Db.Category.SingleOrDefault(x => x.Id == id);
+            //Category = m_Db.Category.Where(x => x.Id == id).FirstOrDefault();
         }
 
-        public async Task<IActionResult> OnPost() 
+        public async Task<IActionResult> OnPost()
         {
-            if (Category.Name == Category.DisplayOrder.ToString())
+            var categoryFromDb = m_Db.Category.Find(Category.Id);
+            if (categoryFromDb != null)
             {
-                ModelState.AddModelError("Category.Name", "The 'DisplayOrder' cannot exactly match the 'Name'.");
-            }
-            if (ModelState.IsValid)
-            {
-                //If there will be multiple post action methods, name can be like "OnPostCreate", "OnPostEdit" etc.
-                await m_Db.Category.AddAsync(Category);
+                m_Db.Category.Remove(categoryFromDb);
                 await m_Db.SaveChangesAsync();
                 return RedirectToPage("Index");
             }
+
             return Page();
         }
     }
