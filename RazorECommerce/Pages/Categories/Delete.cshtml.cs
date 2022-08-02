@@ -33,6 +33,7 @@ namespace RazorECommerce.Pages.Categories
             {
                 m_Db.Category.Remove(categoryFromDb);
                 await m_Db.SaveChangesAsync();
+                TempData["Success"] = "Template deleted successfully!";
                 return RedirectToPage("Index");
             }
 

@@ -37,6 +37,7 @@ namespace RazorECommerce.Pages.Categories
                 //If there will be multiple post action methods, name can be like "OnPostCreate", "OnPostEdit" etc.
                 m_Db.Category.Update(Category);
                 await m_Db.SaveChangesAsync();
+                TempData["Success"] = "Template updated successfully!";
                 return RedirectToPage("Index");
             }
             return Page();
